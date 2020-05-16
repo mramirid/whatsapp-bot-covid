@@ -21,15 +21,15 @@ def hello():
     # return render_template('home.html', datas=data)
 
     result = cid.fetchUpdateStatistik()
-    return result['positif']
+    return str(result['positif'])
 
 @app.route('/insert')
 def insert():
     cur = mysql.connection.cursor()
-    result = cid.fetchUpdateStatistik()
+    dataApiNasional = cid.fetchUpdateStatistik()
     
-    result['dalam_perawatan'] = "2,000"
-    cur.execute("INSERT INTO nasional VALUES (NULL, %d, %s, %s, %s, NULL, NULL)", (variabel taroh sini))
+    dataApiNasional['dalam_perawatan'] = dataApiNasional['positif'] - (dataApiNasional['sembuh'] + dataApiNasional['meninggal'])
+    cur.execute("INSERT INTO nasional VALUES (NULL, %s, %s, %s, %s, CURDATE(), CURDATE())", (dataApiNasional['positif'], dataApiNasional['sembuh'], dataApiNasional['meninggal'], dataApiNasional['dalam_perawatan']))
     mysql.connection.commit()
     return "Sukses"
 
