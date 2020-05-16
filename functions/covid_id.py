@@ -11,6 +11,3 @@ def fetchUpdateStatistik():
         "sembuh"    :int(data['sembuh'].replace(",", "")),
         "meninggal" :int(data['meninggal'].replace(",", ""))
     }
-
-# def getTodayData():
-
