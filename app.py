@@ -1,6 +1,8 @@
 from flask import Flask, render_template, request, url_for, redirect
 from twilio.twiml.messaging_response import MessagingResponse
 from flask_mysqldb import MySQL
+import functions.covid_id as cid
+import json
 
 app = Flask(__name__)
 app.config['MYSQL_HOST'] = 'localhost'
@@ -12,11 +14,24 @@ mysql = MySQL(app)
 
 @app.route('/')
 def hello():
+    # cur = mysql.connection.cursor()
+    # cur.execute("SELECT * FROM nasional")
+    # data = cur.fetchall()
+    # cur.close()
+    # return render_template('home.html', datas=data)
+
+    result = cid.fetchUpdateStatistik()
+    return result['positif']
+
+@app.route('/insert')
+def insert():
     cur = mysql.connection.cursor()
-    cur.execute("SELECT * FROM nasional")
-    data = cur.fetchall()
-    cur.close()
-    return render_template('home.html', datas=data)
+    result = cid.fetchUpdateStatistik()
+    
+    result['dalam_perawatan'] = "2,000"
+    cur.execute("INSERT INTO nasional VALUES (NULL, %d, %s, %s, %s, NULL, NULL)", (variabel taroh sini))
+    mysql.connection.commit()
+    return "Sukses"
 
 
 @app.route('/sms', methods=['POST'])
