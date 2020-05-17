@@ -22,8 +22,9 @@ def base():
 
 @app.route('/nasional')
 def test_nasional():
-    data = getter.get_nasional()
-    return render_template('home.html', datas=data)
+    data = getter.get_today_nasional()
+    date = str(data[6])
+    return str(date[11:16])
 
 @app.route('/provinsi')
 def test_provinsi():

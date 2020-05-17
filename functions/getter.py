@@ -30,6 +30,9 @@ def get_nasional():
         total_yesterday = yesterday[positif] + yesterday[sembuh] + yesterday[meninggal]
         total_today = today[positif] + today[sembuh] + today[meninggal]
         selisih_total = total_today - total_yesterday
+        tempTime = str(today[datetime])
+        readableTime = tempTime[11:16]
+
 
         message = ''
 
@@ -47,7 +50,7 @@ def get_nasional():
             message += '- Dalam perawatan: {}\n\n'.format(today[perawatan])
 
         message += 'Tetap jaga kesehatan dan apabila memungkinkan #DirumahAja\n\n'
-        message += 'Pembaruan terakhir pada {}'.format(today[datetime])
+        message += 'Pembaruan terakhir pada {}'.format(today[readableTime])
     else:
         return False
     
@@ -101,6 +104,8 @@ def get_prov_byname(name):
         total_yesterday = yesterday[positif] + yesterday[sembuh] + yesterday[meninggal]
         total_today = today[positif] + today[sembuh] + today[meninggal]
         selisih_total = total_today - total_yesterday
+        tempTime = str(today[datetime])
+        readableTime = tempTime[11:16]
 
         message = ''
 
@@ -118,7 +123,7 @@ def get_prov_byname(name):
             message += '- Dalam perawatan: {}\n\n'.format(today[perawatan])
 
         message += 'Tetap jaga kesehatan dan apabila memungkinkan #DirumahAja\n\n'
-        message += 'Pembaruan terakhir pada {}'.format(today[datetime])
+        message += 'Pembaruan terakhir pada {}'.format(today[readableTime])
     else:
         return False
 
