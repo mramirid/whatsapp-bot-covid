@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: May 16, 2020 at 04:48 PM
+-- Generation Time: May 17, 2020 at 06:06 PM
 -- Server version: 10.3.22-MariaDB-log-cll-lve
 -- PHP Version: 7.3.6
 
@@ -19,7 +19,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `whatsapp_bot_covid`
+-- Database: `pmhwebid_line_bot_covid`
 --
 
 -- --------------------------------------------------------
@@ -1268,7 +1268,41 @@ INSERT INTO `detail_pengambilan_provinsi` (`id`, `id_pengambilan_provinsi`, `kod
 (1323, 46, 19, 'Kepulauan Bangka Belitung', 29, 7, 21, 1),
 (1324, 46, 75, 'Gorontalo', 23, 15, 7, 1),
 (1325, 46, 53, 'Nusa Tenggara Timur', 47, 2, 44, 1),
-(1326, 46, 11, 'Aceh', 18, 15, 2, 1);
+(1326, 46, 11, 'Aceh', 18, 15, 2, 1),
+(1327, 47, 31, 'DKI Jakarta', 6010, 1306, 4241, 463),
+(1328, 47, 35, 'Jawa Timur', 2152, 312, 1646, 194),
+(1329, 47, 32, 'Jawa Barat', 1652, 320, 1222, 110),
+(1330, 47, 33, 'Jawa Tengah', 1157, 247, 840, 70),
+(1331, 47, 73, 'Sulawesi Selatan', 951, 319, 579, 53),
+(1332, 47, 36, 'Banten', 650, 159, 430, 61),
+(1333, 47, 16, 'Sumatera Selatan', 521, 73, 437, 11),
+(1334, 47, 13, 'Sumatera Barat', 408, 95, 291, 22),
+(1335, 47, 63, 'Kalimantan Selatan', 372, 73, 290, 9),
+(1336, 47, 52, 'Nusa Tenggara Barat', 371, 200, 164, 7),
+(1337, 47, 94, 'Papua', 383, 48, 329, 6),
+(1338, 47, 51, 'Bali', 348, 250, 94, 4),
+(1339, 47, 64, 'Kalimantan Timur', 254, 66, 185, 3),
+(1340, 47, 62, 'Kalimantan Tengah', 227, 87, 129, 11),
+(1341, 47, 12, 'Sumatera Utara', 218, 58, 134, 26),
+(1342, 47, 34, 'Daerah Istimewa Yogyakarta', 199, 85, 106, 8),
+(1343, 47, 74, 'Sulawesi Tenggara', 191, 24, 162, 5),
+(1344, 47, 65, 'Kalimantan Utara', 155, 41, 113, 1),
+(1345, 47, 61, 'Kalimantan Barat', 132, 24, 104, 4),
+(1346, 47, 21, 'Kepulauan Riau', 116, 80, 25, 11),
+(1347, 47, 71, 'Sulawesi Utara', 114, 31, 76, 7),
+(1348, 47, 72, 'Sulawesi Tengah', 115, 24, 87, 4),
+(1349, 47, 91, 'Papua Barat', 105, 5, 99, 1),
+(1350, 47, 14, 'Riau', 99, 60, 33, 6),
+(1351, 47, 82, 'Maluku Utara', 92, 12, 76, 4),
+(1352, 47, 15, 'Jambi', 80, 4, 76, 0),
+(1353, 47, 76, 'Sulawesi Barat', 75, 23, 50, 2),
+(1354, 47, 18, 'Lampung', 67, 26, 36, 5),
+(1355, 47, 81, 'Maluku', 84, 17, 61, 6),
+(1356, 47, 17, 'Bengkulu', 65, 1, 62, 2),
+(1357, 47, 53, 'Nusa Tenggara Timur', 59, 6, 52, 1),
+(1358, 47, 19, 'Kepulauan Bangka Belitung', 29, 23, 5, 1),
+(1359, 47, 75, 'Gorontalo', 24, 15, 8, 1),
+(1360, 47, 11, 'Aceh', 18, 15, 2, 1);
 
 -- --------------------------------------------------------
 
@@ -1325,7 +1359,8 @@ INSERT INTO `nasional` (`id`, `positif`, `sembuh`, `meninggal`, `dalam_perawatan
 (36, 15438, 3287, 1028, 11123, '2020-05-13 00:00:03', '2020-05-13 23:56:01'),
 (37, 16006, 3518, 1043, 11445, '2020-05-14 00:00:04', '2020-05-14 23:56:01'),
 (38, 16496, 3803, 1076, 11617, '2020-05-15 00:00:03', '2020-05-15 23:56:03'),
-(39, 17025, 3911, 1089, 12025, '2020-05-16 00:00:05', '2020-05-16 16:48:04');
+(39, 17025, 3911, 1089, 12025, '2020-05-16 00:00:05', '2020-05-16 23:56:03'),
+(40, 17514, 4129, 1148, 12237, '2020-05-17 00:00:08', '2020-05-17 18:00:05');
 
 -- --------------------------------------------------------
 
@@ -1379,7 +1414,8 @@ INSERT INTO `pengambilan_provinsi` (`id`, `created_at`, `updated_at`) VALUES
 (43, '2020-05-13 00:00:03', '2020-05-13 23:56:02'),
 (44, '2020-05-14 00:00:04', '2020-05-14 23:56:02'),
 (45, '2020-05-15 00:00:03', '2020-05-15 23:56:03'),
-(46, '2020-05-16 00:00:05', '2020-05-16 16:48:05');
+(46, '2020-05-16 00:00:05', '2020-05-16 23:56:03'),
+(47, '2020-05-17 00:00:08', '2020-05-17 18:00:07');
 
 --
 -- Indexes for dumped tables
@@ -1411,19 +1447,19 @@ ALTER TABLE `pengambilan_provinsi`
 -- AUTO_INCREMENT for table `detail_pengambilan_provinsi`
 --
 ALTER TABLE `detail_pengambilan_provinsi`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1327;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1361;
 
 --
 -- AUTO_INCREMENT for table `nasional`
 --
 ALTER TABLE `nasional`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
 
 --
 -- AUTO_INCREMENT for table `pengambilan_provinsi`
 --
 ALTER TABLE `pengambilan_provinsi`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=48;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
