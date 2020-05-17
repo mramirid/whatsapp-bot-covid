@@ -1,8 +1,12 @@
 from flask import Flask, render_template, request, url_for, redirect
-from twilio.twiml.messaging_response import MessagingResponse
 from flask_mysqldb import MySQL
+from twilio.twiml.messaging_response import MessagingResponse
+
+import json
+
 import functions.covid_id as covid_id
 import functions.covid_prov as covid_prov
+import functions.getter as getter
 
 app = Flask(__name__)
 app.config['MYSQL_HOST'] = 'localhost'
@@ -13,28 +17,27 @@ mysql = MySQL(app)
 
 
 @app.route('/')
-def job():
-    # Job di sini
-    return "Job di sini"
-
-@app.route('/testing')
 def test():
-    # cur = mysql.connection.cursor()
-    # cur.execute("SELECT * FROM nasional")
-    # data = cur.fetchall()
-    # cur.close()
-    # return render_template('home.html', datas=data)
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT * FROM nasional")
+    data = cur.fetchall()
+    cur.close()
+    # print(json.dumps(data))
+    return render_template('home.html', datas=data)
 
-    result = covid_prov.fetchUpdateStatistik()
-    return result
+    # result = covid_prov.fetchUpdateStatistik()
+    # return result
+
 
 @app.route('/insert')
 def insert():
     connection = mysql.connection.cursor()
     dataApiNasional = covid_id.fetchUpdateStatistik()
-    dataApiNasional['dalam_perawatan'] = dataApiNasional['positif'] - (dataApiNasional['sembuh'] + dataApiNasional['meninggal'])
+    dataApiNasional['dalam_perawatan'] = dataApiNasional['positif'] - \
+        (dataApiNasional['sembuh'] + dataApiNasional['meninggal'])
 
-    connection.execute("INSERT INTO nasional VALUES (NULL, %s, %s, %s, %s, CURDATE(), CURDATE())", (dataApiNasional['positif'], dataApiNasional['sembuh'], dataApiNasional['meninggal'], dataApiNasional['dalam_perawatan']))
+    connection.execute("INSERT INTO nasional VALUES (NULL, %s, %s, %s, %s, CURDATE(), CURDATE())", (
+        dataApiNasional['positif'], dataApiNasional['sembuh'], dataApiNasional['meninggal'], dataApiNasional['dalam_perawatan']))
     mysql.connection.commit()
 
     return "Sukses"
@@ -51,6 +54,7 @@ def sms_reply():
     resp.message("You said: {}".format(msg))
 
     return str(resp)
+
 
 # Ubah menjadi debug=False ketika akan dideploy ke hosting
 if __name__ == "__main__":
