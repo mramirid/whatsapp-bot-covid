@@ -3,6 +3,7 @@ from flask_mysqldb import MySQL
 from twilio.twiml.messaging_response import MessagingResponse
 
 import json
+import datetime
 
 import functions.covid_id as covid_id
 import functions.covid_prov as covid_prov
@@ -27,6 +28,23 @@ def test():
 
     # result = covid_prov.fetchUpdateStatistik()
     # return result
+
+# Test Dump Array
+@app.route('/test')
+
+def dump():
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT * FROM nasional")
+    data = cur.fetchall()
+    cur.close()
+
+    def myconverter(o):
+        if isinstance(o, datetime.datetime):
+            return o.__str__()
+
+    datas = json.dumps(data, default=myconverter)
+
+    return str(data[0]) #ganti 'datas' kalo pengen liat seluruh datanya
 
 
 @app.route('/insert')
