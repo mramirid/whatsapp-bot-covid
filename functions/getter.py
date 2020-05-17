@@ -57,19 +57,19 @@ def get_prov_byname(name):
         message = ''
 
         if selisih_total > 0:
-            message += 'Statistik kasus di {}<br><br>'.format(today[nama_provinsi])  
-            message += '- Positif: {} (+{})<br>'.format(today[positif], abs(selisih_positif))
-            message += '- Sembuh: {} (+{})<br>'.format(today[sembuh], abs(selisih_sembuh))
-            message += '- Meninggal: {} (+{})<br>'.format(today[meninggal], abs(selisih_meninggal))
-            message += '- Dalam perawatan: {} (+{})<br><br>'.format(today[perawatan], abs(selisih_perawatan))
+            message += 'Statistik kasus di {}\n\n'.format(today[nama_provinsi])  
+            message += '- Positif: {} (+{})\n'.format(today[positif], abs(selisih_positif))
+            message += '- Sembuh: {} (+{})\n'.format(today[sembuh], abs(selisih_sembuh))
+            message += '- Meninggal: {} (+{})\n'.format(today[meninggal], abs(selisih_meninggal))
+            message += '- Dalam perawatan: {} (+{})\n\n'.format(today[perawatan], abs(selisih_perawatan))
         else:
-            message += 'Statistik kasus di {}<br><br>'.format(today[nama_provinsi])  
-            message += '- Positif: {}<br>'.format(today[positif])
-            message += '- Sembuh: {}<br>'.format(today[sembuh])
-            message += '- Meninggal: {}<br>'.format(today[meninggal])
-            message += '- Dalam perawatan: {}<br><br>'.format(today[perawatan])
+            message += 'Statistik kasus di {}\n\n'.format(today[nama_provinsi])  
+            message += '- Positif: {}\n'.format(today[positif])
+            message += '- Sembuh: {}\n'.format(today[sembuh])
+            message += '- Meninggal: {}\n'.format(today[meninggal])
+            message += '- Dalam perawatan: {}\n\n'.format(today[perawatan])
 
-        message += 'Tetap jaga kesehatan dan apabila memungkinkan #DirumahAja<br><br>'
+        message += 'Tetap jaga kesehatan dan apabila memungkinkan #DirumahAja\n\n'
         message += 'Pembaruan terakhir pada {}'.format(today[datetime])
     else:
         return False
