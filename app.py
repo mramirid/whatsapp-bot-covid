@@ -18,17 +18,17 @@ mysql = MySQL(app)
 getter.init_connection(mysql)
 
 @app.route('/nasional')
-def test():
+def test_nasional():
     data = getter.get_nasional()
     return render_template('home.html', datas=data)
 
-@app.route('/prov')
-def dump():
+@app.route('/provinsi')
+def test_provinsi():
     def myconverter(o):
         if isinstance(o, datetime.datetime):
             return o.__str__()
 
-    data = getter.get_nasional()
+    data = getter.get_prov_byname('jawa timur')
     datas = json.dumps(data, indent=4, sort_keys=True, default=myconverter)
 
     return str(datas) # ganti 'datas' kalo pengen liat seluruh datanya
@@ -53,10 +53,12 @@ def sms_reply():
     """Repond to incoming calls with a simple text message"""
     # Fetch the message
     msg = request.form.get('Body')
-
-    # Create reply
+    
     resp = MessagingResponse()
-    resp.message("You said: {}".format(msg))
+    if msg == '/nasional':
+        resp.message(msg)
+    elif msg == '/cari':
+        resp.message("prov")
 
     return str(resp)
 
