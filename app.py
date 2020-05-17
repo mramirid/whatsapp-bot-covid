@@ -22,23 +22,23 @@ def base():
     return 'LANJUTKAN'
 
 
+def myconverter(o):
+    if isinstance(o, datetime):
+        return o.__str__()
+
+
 @app.route('/nasional')
 def test_nasional():
-    data = getter.get_today_nasional()
-    date = str(data[6])
-    return str(date[11:16])
+    data = getter.get_nasional()
+    datas = json.dumps(data, indent=4, sort_keys=True, default=myconverter)
+    return str(datas)
 
 
 @app.route('/provinsi')
 def test_provinsi():
-    def myconverter(o):
-        if isinstance(o, datetime):
-            return o.__str__()
-
     data = getter.get_prov_byname('jawa timur')
     datas = json.dumps(data, indent=4, sort_keys=True, default=myconverter)
-
-    return str(datas)  # ganti 'datas' kalo pengen liat seluruh datanya
+    return str(datas)
 
 
 @app.route('/chat', methods=['POST'])
@@ -54,7 +54,11 @@ def sms_reply():
     chat_response = MessagingResponse()
     words = message.split()
 
-    if words[0] == '/nasional':
+    if words[0] == '/halo':
+        response = "Halo juga\n"
+        response += "Saya adalah bot yang didesain untuk memberikan info kasus COVID-19 baik secara nasional maupun berdasarkan provinsi.\n"
+        response += "Ketikkan '/help' untuk mendapatkan informasi mengenai fitur yang diprogram untuk saya"
+    elif words[0] == '/nasional':
         response = 'Hello world'
     elif words[0] == '/cari':
         if len(words) > 1:
