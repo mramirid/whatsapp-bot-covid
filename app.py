@@ -5,8 +5,6 @@ from twilio.twiml.messaging_response import MessagingResponse
 import json
 import datetime
 
-import functions.covid_id as covid_id
-import functions.covid_prov as covid_prov
 import functions.getter as getter
 
 app = Flask(__name__)
@@ -16,35 +14,24 @@ app.config['MYSQL_PASSWORD'] = ''
 app.config['MYSQL_DB'] = 'whatsapp_bot_covid'
 mysql = MySQL(app)
 
+# init mysql connection
+getter.init_connection(mysql)
 
-@app.route('/')
+@app.route('/nasional')
 def test():
-    cur = mysql.connection.cursor()
-    cur.execute("SELECT * FROM nasional")
-    data = cur.fetchall()
-    cur.close()
-    # print(json.dumps(data))
+    data = getter.get_nasional()
     return render_template('home.html', datas=data)
 
-    # result = covid_prov.fetchUpdateStatistik()
-    # return result
-
-# Test Dump Array
-@app.route('/test')
-
+@app.route('/prov')
 def dump():
-    cur = mysql.connection.cursor()
-    cur.execute("SELECT * FROM nasional")
-    data = cur.fetchall()
-    cur.close()
-
     def myconverter(o):
         if isinstance(o, datetime.datetime):
             return o.__str__()
 
-    datas = json.dumps(data, default=myconverter)
+    data = getter.get_nasional()
+    datas = json.dumps(data, indent=4, sort_keys=True, default=myconverter)
 
-    return str(data[0]) #ganti 'datas' kalo pengen liat seluruh datanya
+    return str(datas) # ganti 'datas' kalo pengen liat seluruh datanya
 
 
 @app.route('/insert')
@@ -61,7 +48,7 @@ def insert():
     return "Sukses"
 
 
-@app.route('/sms', methods=['POST'])
+@app.route('/chat', methods=['POST'])
 def sms_reply():
     """Repond to incoming calls with a simple text message"""
     # Fetch the message
