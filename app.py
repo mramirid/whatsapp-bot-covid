@@ -16,15 +16,18 @@ mysql = MySQL(app)
 # init mysql connection
 getter.init_connection(mysql)
 
+
 @app.route('/')
 def base():
     return 'LANJUTKAN'
+
 
 @app.route('/nasional')
 def test_nasional():
     data = getter.get_today_nasional()
     date = str(data[6])
     return str(date[11:16])
+
 
 @app.route('/provinsi')
 def test_provinsi():
@@ -35,21 +38,7 @@ def test_provinsi():
     data = getter.get_prov_byname('jawa timur')
     datas = json.dumps(data, indent=4, sort_keys=True, default=myconverter)
 
-    return str(datas) # ganti 'datas' kalo pengen liat seluruh datanya
-
-
-# @app.route('/insert')
-# def insert():
-#     connection = mysql.connection.cursor()
-#     dataApiNasional = covid_id.fetchUpdateStatistik()
-#     dataApiNasional['dalam_perawatan'] = dataApiNasional['positif'] - \
-#         (dataApiNasional['sembuh'] + dataApiNasional['meninggal'])
-
-#     connection.execute("INSERT INTO nasional VALUES (NULL, %s, %s, %s, %s, CURDATE(), CURDATE())", (
-#         dataApiNasional['positif'], dataApiNasional['sembuh'], dataApiNasional['meninggal'], dataApiNasional['dalam_perawatan']))
-#     mysql.connection.commit()
-
-#     return "Sukses"
+    return str(datas)  # ganti 'datas' kalo pengen liat seluruh datanya
 
 
 @app.route('/chat', methods=['POST'])
