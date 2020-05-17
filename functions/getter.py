@@ -19,7 +19,7 @@ def get_nasional():
         meninggal = 3
         perawatan = 4
         datetime = 6
-    
+
         # Penambahan masing2 kasus positif, sembuh & meninggal dari kemarin
         selisih_positif = today[positif] - yesterday[positif]
         selisih_sembuh = today[sembuh] - yesterday[sembuh]
@@ -27,23 +27,27 @@ def get_nasional():
         selisih_perawatan = today[perawatan] - yesterday[perawatan]
 
         # Selisih total kasus dari kemarin
-        total_yesterday = yesterday[positif] + yesterday[sembuh] + yesterday[meninggal]
+        total_yesterday = yesterday[positif] + \
+            yesterday[sembuh] + yesterday[meninggal]
         total_today = today[positif] + today[sembuh] + today[meninggal]
         selisih_total = total_today - total_yesterday
         tempTime = str(today[datetime])
         readableTime = tempTime[11:16]
 
-
         message = ''
 
         if selisih_total > 0:
-            message += 'Statistik kasus di Indonesia\n\n'  
-            message += '- Positif: {} (+{})\n'.format(today[positif], abs(selisih_positif))
-            message += '- Sembuh: {} (+{})\n'.format(today[sembuh], abs(selisih_sembuh))
-            message += '- Meninggal: {} (+{})\n'.format(today[meninggal], abs(selisih_meninggal))
-            message += '- Dalam perawatan: {} (+{})\n\n'.format(today[perawatan], abs(selisih_perawatan))
+            message += 'Statistik kasus di Indonesia\n\n'
+            message += '- Positif: {} (+{})\n'.format(
+                today[positif], abs(selisih_positif))
+            message += '- Sembuh: {} (+{})\n'.format(
+                today[sembuh], abs(selisih_sembuh))
+            message += '- Meninggal: {} (+{})\n'.format(
+                today[meninggal], abs(selisih_meninggal))
+            message += '- Dalam perawatan: {} (+{})\n\n'.format(
+                today[perawatan], abs(selisih_perawatan))
         else:
-            message += 'Statistik kasus di Indonesia\n\n' 
+            message += 'Statistik kasus di Indonesia\n\n'
             message += '- Positif: {}\n'.format(today[positif])
             message += '- Sembuh: {}\n'.format(today[sembuh])
             message += '- Meninggal: {}\n'.format(today[meninggal])
@@ -53,10 +57,8 @@ def get_nasional():
         message += 'Pembaruan terakhir pada {}'.format(today[readableTime])
     else:
         return False
-    
+
     return message
-
-
 
 
 def get_today_nasional():
@@ -101,7 +103,8 @@ def get_prov_byname(name):
         selisih_perawatan = today[perawatan] - yesterday[perawatan]
 
         # Selisih total kasus dari kemarin
-        total_yesterday = yesterday[positif] + yesterday[sembuh] + yesterday[meninggal]
+        total_yesterday = yesterday[positif] + \
+            yesterday[sembuh] + yesterday[meninggal]
         total_today = today[positif] + today[sembuh] + today[meninggal]
         selisih_total = total_today - total_yesterday
         tempTime = str(today[datetime])
@@ -110,13 +113,17 @@ def get_prov_byname(name):
         message = ''
 
         if selisih_total > 0:
-            message += 'Statistik kasus di {}\n\n'.format(today[nama_provinsi])  
-            message += '- Positif: {} (+{})\n'.format(today[positif], abs(selisih_positif))
-            message += '- Sembuh: {} (+{})\n'.format(today[sembuh], abs(selisih_sembuh))
-            message += '- Meninggal: {} (+{})\n'.format(today[meninggal], abs(selisih_meninggal))
-            message += '- Dalam perawatan: {} (+{})\n\n'.format(today[perawatan], abs(selisih_perawatan))
+            message += 'Statistik kasus di {}\n\n'.format(today[nama_provinsi])
+            message += '- Positif: {} (+{})\n'.format(
+                today[positif], abs(selisih_positif))
+            message += '- Sembuh: {} (+{})\n'.format(
+                today[sembuh], abs(selisih_sembuh))
+            message += '- Meninggal: {} (+{})\n'.format(
+                today[meninggal], abs(selisih_meninggal))
+            message += '- Dalam perawatan: {} (+{})\n\n'.format(
+                today[perawatan], abs(selisih_perawatan))
         else:
-            message += 'Statistik kasus di {}\n\n'.format(today[nama_provinsi])  
+            message += 'Statistik kasus di {}\n\n'.format(today[nama_provinsi])
             message += '- Positif: {}\n'.format(today[positif])
             message += '- Sembuh: {}\n'.format(today[sembuh])
             message += '- Meninggal: {}\n'.format(today[meninggal])
