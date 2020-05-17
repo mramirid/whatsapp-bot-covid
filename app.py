@@ -55,11 +55,11 @@ def sms_reply():
     words = message.split()
 
     if words[0] == '/halo':
-        response = "Halo juga\n"
-        response += "Saya adalah bot yang didesain untuk memberikan info kasus COVID-19 baik secara nasional maupun berdasarkan provinsi.\n"
+        response = "Halo juga\n\n"
+        response += "Saya adalah bot yang didesain untuk memberikan info kasus COVID-19 baik secara nasional maupun berdasarkan provinsi.\n\n"
         response += "Ketikkan '/help' untuk mendapatkan informasi mengenai fitur yang diprogram untuk saya"
     elif words[0] == '/nasional':
-        response = 'Hello world'
+        response = getter.get_nasional()
     elif words[0] == '/cari':
         if len(words) > 1:
             nama_prov = ' '.join(words[1:])
