@@ -1,10 +1,12 @@
 global mysql
 
+
 def init_connection(new_mysql):
     global mysql
     mysql = new_mysql
 
 ################### Nasional ###################
+
 
 def get_nasional():
     cur = mysql.connection.cursor()
@@ -13,29 +15,72 @@ def get_nasional():
     cur.close()
     return data
 
+
 def get_today_nasional():
     pass
+
 
 def get_yesterday_nasional():
     pass
 
+
 ################### End of Nasional ###################
+
 
 ################### Provinsi ###################
 
+
 def get_prov_byname(name):
-    # Result index
-    # 0: datetime, 2: kode_prov, 3: nama_prov, 
-    # 4: positif, 5: sembuh, 6: perawatan, 7: meninggal
-    today     = get_today_prov_byname(name)
+    today = get_today_prov_byname(name)
     yesterday = get_yesterday_prov_byname(name)
 
-    return today
+    if len(today) > 0:
+        # Index, mempermudah saja
+        datetime = 0
+        nama_provinsi = 1
+        positif = 2
+        sembuh = 3
+        perawatan = 4
+        meninggal = 5
+
+        # Penambahan masing2 kasus positif, sembuh & meninggal dari kemarin
+        selisih_positif = today[positif] - yesterday[positif]
+        selisih_sembuh = today[sembuh] - yesterday[sembuh]
+        selisih_meninggal = today[meninggal] - yesterday[meninggal]
+        selisih_perawatan = today[perawatan] - yesterday[perawatan]
+
+        # Selisih total kasus dari kemarin
+        total_yesterday = yesterday[positif] + yesterday[sembuh] + yesterday[meninggal]
+        total_today = today[positif] + today[sembuh] + today[meninggal]
+        selisih_total = total_today - total_yesterday
+
+        message = ''
+
+        if selisih_total > 0:
+            message += 'Statistik kasus di {}<br><br>'.format(today[nama_provinsi])  
+            message += '- Positif: {} (+{})<br>'.format(today[positif], abs(selisih_positif))
+            message += '- Sembuh: {} (+{})<br>'.format(today[sembuh], abs(selisih_sembuh))
+            message += '- Meninggal: {} (+{})<br>'.format(today[meninggal], abs(selisih_meninggal))
+            message += '- Dalam perawatan: {} (+{})<br><br>'.format(today[perawatan], abs(selisih_perawatan))
+        else:
+            message += 'Statistik kasus di {}<br><br>'.format(today[nama_provinsi])  
+            message += '- Positif: {}<br>'.format(today[positif])
+            message += '- Sembuh: {}<br>'.format(today[sembuh])
+            message += '- Meninggal: {}<br>'.format(today[meninggal])
+            message += '- Dalam perawatan: {}<br><br>'.format(today[perawatan])
+
+        message += 'Tetap jaga kesehatan dan apabila memungkinkan #DirumahAja<br><br>'
+        message += 'Pembaruan terakhir pada {}'.format(today[datetime])
+    else:
+        return False
+
+    return message
+
 
 def get_today_prov_byname(name):
     cur = mysql.connection.cursor()
-    cur.execute('''SELECT pengambilan_provinsi.updated_at, 
-                    kode_provinsi, 
+    cur.execute('''SELECT 
+                    pengambilan_provinsi.updated_at, 
                     nama_provinsi, 
                     positif, 
                     sembuh, 
@@ -49,10 +94,11 @@ def get_today_prov_byname(name):
     cur.close()
     return data
 
+
 def get_yesterday_prov_byname(name):
     cur = mysql.connection.cursor()
-    cur.execute('''SELECT pengambilan_provinsi.updated_at, 
-                    kode_provinsi, 
+    cur.execute('''SELECT 
+                    pengambilan_provinsi.updated_at, 
                     nama_provinsi, 
                     positif, 
                     sembuh, 
@@ -65,5 +111,6 @@ def get_yesterday_prov_byname(name):
     data = cur.fetchone()
     cur.close()
     return data
+
 
 ################### End of Provinsi ###################
