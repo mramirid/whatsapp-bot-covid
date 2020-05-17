@@ -17,7 +17,7 @@ def get_nasional():
         positif = 1
         sembuh = 2
         meninggal = 3
-        dalam_perawatan = 4
+        perawatan = 4
         datetime = 6
     
         # Penambahan masing2 kasus positif, sembuh & meninggal dari kemarin
@@ -34,13 +34,13 @@ def get_nasional():
         message = ''
 
         if selisih_total > 0:
-            message += 'Statistik kasus di {}\n\n'.format(today[nama_provinsi])  
+            message += 'Statistik kasus di Indonesia\n\n'  
             message += '- Positif: {} (+{})\n'.format(today[positif], abs(selisih_positif))
             message += '- Sembuh: {} (+{})\n'.format(today[sembuh], abs(selisih_sembuh))
             message += '- Meninggal: {} (+{})\n'.format(today[meninggal], abs(selisih_meninggal))
             message += '- Dalam perawatan: {} (+{})\n\n'.format(today[perawatan], abs(selisih_perawatan))
         else:
-            message += 'Statistik kasus di {}\n\n'.format(today[nama_provinsi])  
+            message += 'Statistik kasus di Indonesia\n\n' 
             message += '- Positif: {}\n'.format(today[positif])
             message += '- Sembuh: {}\n'.format(today[sembuh])
             message += '- Meninggal: {}\n'.format(today[meninggal])
