@@ -13,7 +13,7 @@ def get_nasional():
     yesterday = get_yesterday_nasional()
 
     # Memgambil index array agar saat pemanggilan variabel mudah, tidak today[0] dst
-    if len(today) > 1:
+    if len(today) > 0:
         positif = 1
         sembuh = 2
         meninggal = 3
