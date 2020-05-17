@@ -1,9 +1,9 @@
 global mysql
 
-
 def init_connection(new_mysql):
     global mysql
     mysql = new_mysql
+
 
 ################### Nasional ###################
 
@@ -54,7 +54,7 @@ def get_nasional():
             message += '- Dalam perawatan: {}\n\n'.format(today[perawatan])
 
         message += 'Tetap jaga kesehatan dan apabila memungkinkan #DirumahAja\n\n'
-        message += 'Pembaruan terakhir pada {}'.format(today[readableTime])
+        message += 'Pembaruan terakhir pada {}'.format(readableTime)
     else:
         return False
 
@@ -130,7 +130,7 @@ def get_prov_byname(name):
             message += '- Dalam perawatan: {}\n\n'.format(today[perawatan])
 
         message += 'Tetap jaga kesehatan dan apabila memungkinkan #DirumahAja\n\n'
-        message += 'Pembaruan terakhir pada {}'.format(today[readableTime])
+        message += 'Pembaruan terakhir pada {}'.format(readableTime)
     else:
         return False
 
