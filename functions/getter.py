@@ -59,7 +59,7 @@ def get_nasional():
 def get_today_nasional():
     cur = mysql.connection.cursor()
     cur.execute("SELECT * FROM nasional WHERE DATE(created_at) = CURDATE()")
-    data = cur.fetchall()
+    data = cur.fetchone()
     cur.close()
     return data
 
@@ -67,7 +67,7 @@ def get_today_nasional():
 def get_yesterday_nasional():
     cur = mysql.connection.cursor()
     cur.execute("SELECT * FROM nasional WHERE DATE(created_at) = CURDATE()-1")
-    data = cur.fetchall()
+    data = cur.fetchone()
     cur.close()
     return data
 
