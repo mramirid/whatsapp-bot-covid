@@ -19,7 +19,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `pmhwebid_line_bot_covid`
+-- Database: `whatsapp_bot_covid`
 --
 
 -- --------------------------------------------------------
