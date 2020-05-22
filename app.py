@@ -56,8 +56,9 @@ def sms_reply():
 
     if words[0] == '/halo':
         response = "Halo juga\n\n"
-        response += "Saya adalah bot yang didesain untuk memberikan info kasus COVID-19 baik secara nasional maupun berdasarkan provinsi.\n\n"
-        response += "Ketikkan '/help' untuk mendapatkan informasi mengenai fitur yang diprogram untuk saya"
+        response += "Saya adalah bot yang didesain untuk memberikan info kasus COVID-19 baik secara nasional maupun berdasarkan provinsi.\n"
+        response += "Sumber data didapatkan dari API yang disediakan oleh kawalcorona - https://kawalcorona.com/api/\n"
+        response += "Ketikkan '/help' untuk mendapatkan informasi mengenai fitur yang diprogram untuk saya\n\n"
     elif words[0] == '/nasional':
         response = getter.get_nasional()
     elif words[0] == '/cari':
