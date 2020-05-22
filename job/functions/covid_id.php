@@ -2,7 +2,7 @@
 
 namespace CovidID;
 
-require_once $_SERVER['DOCUMENT_ROOT'] . 'job/database/config.php';
+require_once 'C:/laragon/www/Whatsapp-Bot-Covid19/job/database/config.php';
 
 date_default_timezone_set('Asia/Jakarta');
 
