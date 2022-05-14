@@ -1,8 +1,9 @@
-# Cron Job
+# Cron Job untuk Whatsapp Bot COVID
 
-File ./request.php merupakan file cron job untuk mendapatkan data kasus covid19 dari API secara berkala lalu dicatat ke dalam database. Silahkan anda coba sendiri cara konfigurasi cron job-nya. 
+File [request.php](./request.php) merupakan file yang dijalankan oleh *cron job*. File tersebut berisi kode untuk mendapatkan data statistik COVID19 dari API kawalcorona secara berkala, kemudian data statistik yang diambil akan dicatat ke dalam *database*.
 
-> *INGAT* kalau anda pemula buat konfigurasi cron job, anda bakal dihadapkan error require. Solusinya untuk setiap file cron job, requirenya harus relatif dari direktori home cpanel:
-```/home/nama_user/nama_projek/direktori_ke_file/file.php```
+Kemungkinan saat anda melakukan konfigurasi *cron job* di cPanel, anda akan menemukan error require. Solusinya adalah untuk setiap file *cron job* requirenya harus relatif dari direktori home cPanel, contoh: `/home/nama_user/nama_projek/direktori_ke_file/require.php`
 
-Kalau anda pingin jalanin manual tanpa cron job, silahkan buka saja file ./request.php ini di url browser (php web server nyalakan).
+## Pembaharuan Data Statistik Tanpa Cron Job
+
+Silahkan jalankan langsung file [request.php](./request.php) melalui URL di browser jika anda ingin menjalankan pembaharuan data statistik secara manual tanpa *cron job*.
