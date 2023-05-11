@@ -1,5 +1,5 @@
 {
-  "conventionalCommits.scopes": [
-    "legacy"
-  ],
+  "conventionalCommits.scopes": ["legacy"],
+  "typescript.tsdk": "./node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true
 }
