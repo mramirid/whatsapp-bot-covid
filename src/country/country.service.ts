@@ -28,7 +28,7 @@ export class CountryService {
 
     return (
       'Statistik COVID-19 di Indonesia\n\n' +
-      `Total kasus: ${cases} (+${todayCases})\n` +
+      `Total: ${cases} (+${todayCases})\n` +
       `Sembuh: ${recovered} (+${todayRecovered})\n` +
       `Meninggal: ${deaths} (+${todayDeaths})\n` +
       `Dirawat: ${active}\n` +
