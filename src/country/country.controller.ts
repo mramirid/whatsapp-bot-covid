@@ -1,4 +1,5 @@
-import { Controller, Get } from '@nestjs/common';
+import { CacheInterceptor } from '@nestjs/cache-manager';
+import { Controller, Get, UseInterceptors } from '@nestjs/common';
 import { CountryService } from './country.service';
 
 @Controller('country')
@@ -6,7 +7,8 @@ export class CountryController {
   constructor(private readonly countryService: CountryService) {}
 
   @Get()
-  getTodayStats() {
-    return this.countryService.getLastStatsAsMessage();
+  @UseInterceptors(CacheInterceptor)
+  index() {
+    return this.countryService.getTodayStatsAsMessage();
   }
 }

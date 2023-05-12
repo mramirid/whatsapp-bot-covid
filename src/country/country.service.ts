@@ -1,75 +1,30 @@
 import { HttpService } from '@nestjs/axios';
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
-import { Cron, CronExpression } from '@nestjs/schedule';
-import { isError } from 'lodash';
+import { Injectable } from '@nestjs/common';
 import { firstValueFrom, map, retry } from 'rxjs';
 import type { CountryStats } from './country-stats.interface';
 
 @Injectable()
-export class CountryService implements OnModuleInit {
-  private lastStats: CountryStats | undefined;
-
-  private readonly logger = new Logger(CountryService.name);
-
+export class CountryService {
   constructor(private readonly httpService: HttpService) {}
 
-  async onModuleInit() {
-    this.lastStats = await firstValueFrom(this.fetchStats());
-    this.logger.log('onModuleInit successfully initialized the country stats');
-  }
+  async getTodayStatsAsMessage() {
+    const lastStats = await firstValueFrom(this.fetchStats());
 
-  @Cron(CronExpression.EVERY_DAY_AT_6PM, { timeZone: 'Asia/Jakarta' })
-  handleFetchStats() {
-    this.fetchStats()
-      .pipe(retry({ count: 24, delay: 3_600_000 }))
-      .subscribe({
-        next: (stats) => {
-          this.lastStats = stats;
-          this.logger.log('CRON successfully updated the country stats');
-        },
-        error: (error) => {
-          const message = isError(error)
-            ? error.message
-            : 'CRON failed to fetch the country stats';
-          this.logger.error(message);
-        },
-      });
-  }
-
-  private fetchStats() {
-    return this.httpService
-      .get<CountryStats>(
-        'https://corona.lmao.ninja/v2/countries/ID?yesterday=true&strict=true&query=',
-      )
-      .pipe(
-        map((response) => {
-          if (response.status > 500) {
-            throw new Error(response.statusText);
-          }
-
-          return response.data;
-        }),
-      );
-  }
-
-  getLastStatsAsMessage() {
     const numberFormatter = new Intl.NumberFormat('id-ID');
+    const dateFormatter = new Intl.DateTimeFormat('id-ID', {
+      dateStyle: 'medium',
+      timeStyle: 'long',
+    });
 
-    const cases = numberFormatter.format(this.lastStats?.cases ?? 0);
-    const todayCases = numberFormatter.format(this.lastStats?.todayCases ?? 0);
-    const recovered = numberFormatter.format(this.lastStats?.recovered ?? 0);
-    const todayRecovered = numberFormatter.format(
-      this.lastStats?.todayRecovered ?? 0,
-    );
-    const deaths = numberFormatter.format(this.lastStats?.deaths ?? 0);
-    const todayDeaths = numberFormatter.format(
-      this.lastStats?.todayDeaths ?? 0,
-    );
-    const active = numberFormatter.format(this.lastStats?.active ?? 0);
-    const critical = numberFormatter.format(this.lastStats?.critical ?? 0);
-    const updated = new Date(
-      this.lastStats?.updated ?? Date.now(),
-    ).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'long' });
+    const cases = numberFormatter.format(lastStats.cases);
+    const todayCases = numberFormatter.format(lastStats.todayCases);
+    const recovered = numberFormatter.format(lastStats.recovered);
+    const todayRecovered = numberFormatter.format(lastStats.todayRecovered);
+    const deaths = numberFormatter.format(lastStats.deaths);
+    const todayDeaths = numberFormatter.format(lastStats.todayDeaths);
+    const active = numberFormatter.format(lastStats.active);
+    const critical = numberFormatter.format(lastStats.critical);
+    const updated = dateFormatter.format(lastStats.updated);
 
     return (
       'Statistik COVID-19 di Indonesia\n\n' +
@@ -81,5 +36,22 @@ export class CountryService implements OnModuleInit {
       `Tetap jaga kesehatan dan rajin cuci tangan.\n\n` +
       `Pembaharuan terakhir pada ${updated}.`
     );
+  }
+
+  private fetchStats() {
+    return this.httpService
+      .get<CountryStats>(
+        'https://corona.lmao.ninja/v2/countries/ID?yesterday=true&strict=true&query=',
+      )
+      .pipe(
+        retry(3),
+        map((response) => {
+          if (response.status > 500) {
+            throw new Error(response.statusText);
+          }
+
+          return response.data;
+        }),
+      );
   }
 }
