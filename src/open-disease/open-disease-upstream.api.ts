@@ -20,7 +20,8 @@ export class OpenDiseaseUpstreamAPI extends UpstreamAPI {
         map((response) => {
           if (response.status >= 400) {
             throw new Error(
-              'Open Disease API responded with status ' + response.status,
+              'Open Disease API responded an error with status ' +
+                response.status,
               { cause: response },
             );
           }
