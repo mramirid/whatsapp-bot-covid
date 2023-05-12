@@ -10,7 +10,7 @@ export class CountryService {
   getTodayStatsMessage() {
     return this.upstreamAPI.getCountryStats().pipe(
       retry(3),
-      map((stats) => this.formatStatsToStrings(stats)),
+      map((stats) => this.formatStats(stats)),
       map(
         (stats) =>
           'Statistik COVID-19 di Indonesia\n\n' +
@@ -25,9 +25,7 @@ export class CountryService {
     );
   }
 
-  private formatStatsToStrings(
-    stats: CountryStats,
-  ): Record<keyof CountryStats, string> {
+  private formatStats(stats: CountryStats): Record<keyof CountryStats, string> {
     const numberFormatter = new Intl.NumberFormat('id-ID');
     const dateFormatter = new Intl.DateTimeFormat('id-ID', {
       dateStyle: 'medium',
