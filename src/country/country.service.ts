@@ -39,7 +39,7 @@ export class CountryService implements OnModuleInit {
   private fetchStats() {
     return this.httpService
       .get<CountryStats>(
-        'https://corona.lmao.ninja/v2/countries/Indonesia?yesterday=true&strict=true&query=',
+        'https://corona.lmao.ninja/v2/countries/ID?yesterday=true&strict=true&query=',
       )
       .pipe(
         map((response) => {
