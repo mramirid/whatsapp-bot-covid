@@ -1,57 +1,48 @@
-import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
-import { firstValueFrom, map, retry } from 'rxjs';
+import { map } from 'rxjs';
+import { UpstreamAPI } from '../upstream-api.abstract';
 import type { CountryStats } from './country-stats.interface';
 
 @Injectable()
 export class CountryService {
-  constructor(private readonly httpService: HttpService) {}
+  constructor(private readonly upstreamAPI: UpstreamAPI) {}
 
-  async getTodayStatsAsMessage() {
-    const lastStats = await firstValueFrom(this.fetchStats());
+  getTodayStatsMessage() {
+    return this.upstreamAPI.getCountryStats().pipe(
+      map((stats) => this.formatStatsToStrings(stats)),
+      map(
+        (stats) =>
+          'Statistik COVID-19 di Indonesia\n\n' +
+          `Total: ${stats.cases} (+${stats.todayCases})\n` +
+          `Sembuh: ${stats.recovered} (+${stats.todayRecovered})\n` +
+          `Meninggal: ${stats.deaths} (+${stats.todayDeaths})\n` +
+          `Dirawat: ${stats.active}\n` +
+          `Kritis: ${stats.critical}\n\n` +
+          `Tetap jaga kesehatan dan rajin cuci tangan.\n\n` +
+          `Pembaharuan terakhir pada ${stats.updatedAt}.`,
+      ),
+    );
+  }
 
+  private formatStatsToStrings(
+    stats: CountryStats,
+  ): Record<keyof CountryStats, string> {
     const numberFormatter = new Intl.NumberFormat('id-ID');
     const dateFormatter = new Intl.DateTimeFormat('id-ID', {
       dateStyle: 'medium',
       timeStyle: 'long',
     });
 
-    const cases = numberFormatter.format(lastStats.cases);
-    const todayCases = numberFormatter.format(lastStats.todayCases);
-    const recovered = numberFormatter.format(lastStats.recovered);
-    const todayRecovered = numberFormatter.format(lastStats.todayRecovered);
-    const deaths = numberFormatter.format(lastStats.deaths);
-    const todayDeaths = numberFormatter.format(lastStats.todayDeaths);
-    const active = numberFormatter.format(lastStats.active);
-    const critical = numberFormatter.format(lastStats.critical);
-    const updated = dateFormatter.format(lastStats.updated);
-
-    return (
-      'Statistik COVID-19 di Indonesia\n\n' +
-      `Total: ${cases} (+${todayCases})\n` +
-      `Sembuh: ${recovered} (+${todayRecovered})\n` +
-      `Meninggal: ${deaths} (+${todayDeaths})\n` +
-      `Dirawat: ${active}\n` +
-      `Kritis: ${critical}\n\n` +
-      `Tetap jaga kesehatan dan rajin cuci tangan.\n\n` +
-      `Pembaharuan terakhir pada ${updated}.`
-    );
-  }
-
-  private fetchStats() {
-    return this.httpService
-      .get<CountryStats>(
-        'https://corona.lmao.ninja/v2/countries/ID?yesterday=true&strict=true&query=',
-      )
-      .pipe(
-        retry(3),
-        map((response) => {
-          if (response.status > 500) {
-            throw new Error(response.statusText);
-          }
-
-          return response.data;
-        }),
-      );
+    return {
+      cases: numberFormatter.format(stats.cases),
+      todayCases: numberFormatter.format(stats.todayCases),
+      recovered: numberFormatter.format(stats.recovered),
+      todayRecovered: numberFormatter.format(stats.todayRecovered),
+      deaths: numberFormatter.format(stats.deaths),
+      todayDeaths: numberFormatter.format(stats.todayDeaths),
+      active: numberFormatter.format(stats.active),
+      critical: numberFormatter.format(stats.critical),
+      updatedAt: dateFormatter.format(stats.updatedAt),
+    };
   }
 }

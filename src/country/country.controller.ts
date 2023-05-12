@@ -1,4 +1,4 @@
-import { CacheInterceptor } from '@nestjs/cache-manager';
+import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
 import { Controller, Get, UseInterceptors } from '@nestjs/common';
 import { CountryService } from './country.service';
 
@@ -8,7 +8,8 @@ export class CountryController {
 
   @Get()
   @UseInterceptors(CacheInterceptor)
-  index() {
-    return this.countryService.getTodayStatsAsMessage();
+  @CacheTTL(86_400_000)
+  getStatsMessage() {
+    return this.countryService.getTodayStatsMessage();
   }
 }
