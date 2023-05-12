@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { map } from 'rxjs';
+import { map, retry } from 'rxjs';
 import { UpstreamAPI } from '../upstream-api.abstract';
 import type { CountryStats } from './country-stats.interface';
 
@@ -9,6 +9,7 @@ export class CountryService {
 
   getTodayStatsMessage() {
     return this.upstreamAPI.getCountryStats().pipe(
+      retry(3),
       map((stats) => this.formatStatsToStrings(stats)),
       map(
         (stats) =>

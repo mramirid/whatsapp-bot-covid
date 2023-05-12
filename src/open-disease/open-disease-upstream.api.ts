@@ -1,6 +1,6 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
-import { map, Observable, retry } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import type { CountryStats } from '../country/country-stats.interface';
 import { UpstreamAPI } from '../upstream-api.abstract';
 import type { OpenDiseaseCountryStats } from './open-disease-country-stats.interface';
@@ -17,23 +17,26 @@ export class OpenDiseaseUpstreamAPI extends UpstreamAPI {
         'https://corona.lmao.ninja/v2/countries/ID?yesterday=true&strict=true&query=',
       )
       .pipe(
-        retry(3),
         map((response) => {
-          if (response.status > 400) {
-            throw new Error(response.statusText);
+          if (response.status >= 400) {
+            throw new Error(
+              'Open Disease API responded with status ' + response.status,
+              { cause: response },
+            );
           }
-          return response;
+
+          return response.data;
         }),
-        map((response) => ({
-          cases: response.data.cases,
-          todayCases: response.data.todayCases,
-          deaths: response.data.deaths,
-          todayDeaths: response.data.todayCases,
-          recovered: response.data.recovered,
-          todayRecovered: response.data.todayRecovered,
-          active: response.data.active,
-          critical: response.data.critical,
-          updatedAt: new Date(response.data.updated),
+        map((stats) => ({
+          cases: stats.cases,
+          todayCases: stats.todayCases,
+          deaths: stats.deaths,
+          todayDeaths: stats.todayCases,
+          recovered: stats.recovered,
+          todayRecovered: stats.todayRecovered,
+          active: stats.active,
+          critical: stats.critical,
+          updatedAt: new Date(stats.updated),
         })),
       );
   }
