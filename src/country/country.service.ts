@@ -1,14 +1,13 @@
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Inject, Injectable } from '@nestjs/common';
 import type { Cache } from 'cache-manager';
-import { randomUUID } from 'crypto';
-import { from, map, of, switchMap, tap } from 'rxjs';
-import { UpstreamAPI } from '../upstream-api/upstream-api.abstract';
+import { from, map, of, retry, switchMap, tap } from 'rxjs';
 import type { CountryStats } from '../upstream-api/country-stats.interface';
+import { UpstreamAPI } from '../upstream-api/upstream-api.abstract';
 
 @Injectable()
 export class CountryService {
-  private readonly COUNTRY_CACHE_KEY = randomUUID();
+  private readonly STATS_CACHE_KEY = 'COUNTRY_STATS_CACHE';
 
   constructor(
     private readonly upstreamAPI: UpstreamAPI,
@@ -33,14 +32,17 @@ export class CountryService {
   }
 
   private getTodayStats() {
-    return from(
-      this.cacheManager.get<CountryStats>(this.COUNTRY_CACHE_KEY),
-    ).pipe(
-      switchMap((cachedStats) =>
-        cachedStats ? of(cachedStats) : this.upstreamAPI.getCountryStats(),
-      ),
-      tap((stats) => {
-        this.cacheManager.set(this.COUNTRY_CACHE_KEY, stats, 10_000);
+    return from(this.cacheManager.get<CountryStats>(this.STATS_CACHE_KEY)).pipe(
+      switchMap((cachedStats) => {
+        if (cachedStats) {
+          return of(cachedStats);
+        }
+        return this.upstreamAPI.getCountryStats().pipe(
+          retry(3),
+          tap((stats) => {
+            this.cacheManager.set(this.STATS_CACHE_KEY, stats);
+          }),
+        );
       }),
     );
   }
