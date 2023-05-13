@@ -6,15 +6,8 @@ This bot utilizes the Twilio messaging service to make itself available on Whats
 
 This project is now in version 2. I have removed the feature to search COVID-19 statistics at provincial level, because I could not find any API that provides such data. The first version can be found in the [V1 - The Legacy Codebase](https://github.com/mramirid/whatsapp-bot-covid/releases/tag/v1) release.
 
-<!-- TODO: add screenshots -->
-<!-- ## Screenshots -->
+## Screenshots
 
-<!-- <p align="center">
-  <img src="assets/images/1.jpeg" alt="Screenshot 1" border="1" height="600">
-</p>
-
-<hr>
-
-<p align="center">
-  <img src="assets/images/2.jpeg" alt="Screenshot 1" border="1" height="600">
-</p> -->
+| Hallo & Help                                                                                                                                                                                                                  | Get Statistics                                                                                                                                                                                                                    |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| <img src="https://res.cloudinary.com/mramirid/image/upload//fl_attachment:IMG_20230514_063209_kyxxqh//v1684021458/whatsapp-bot-covid-indonesia/IMG_20230514_063209_kyxxqh.jpg?_s=public-apps" alt="Landing Page" width="300"> | <img src="https://res.cloudinary.com/mramirid/image/upload//fl_attachment:IMG_20230514_063253_kjzehs//v1684021461/whatsapp-bot-covid-indonesia/IMG_20230514_063253_kjzehs.jpg?_s=public-apps" width="300" alt="Property Details"> |
