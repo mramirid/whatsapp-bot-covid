@@ -1,27 +1,47 @@
-import { Injectable } from '@nestjs/common';
-import { map, retry } from 'rxjs';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Inject, Injectable } from '@nestjs/common';
+import type { Cache } from 'cache-manager';
+import { randomUUID } from 'crypto';
+import { from, map, of, switchMap, tap } from 'rxjs';
 import { UpstreamAPI } from '../upstream-api.abstract';
 import type { CountryStats } from './country-stats.interface';
 
 @Injectable()
 export class CountryService {
-  constructor(private readonly upstreamAPI: UpstreamAPI) {}
+  private readonly COUNTRY_CACHE_KEY = randomUUID();
+
+  constructor(
+    private readonly upstreamAPI: UpstreamAPI,
+    @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
+  ) {}
 
   getTodayStatsMessage() {
-    return this.upstreamAPI.getCountryStats().pipe(
-      retry(3),
+    return this.getTodayStats().pipe(
       map((stats) => this.formatStats(stats)),
       map(
         (stats) =>
-          'Statistik COVID-19 di Indonesia\n\n' +
+          '*Statistik COVID-19 di Indonesia*\n\n' +
           `Total: ${stats.cases} (+${stats.todayCases})\n` +
           `Sembuh: ${stats.recovered} (+${stats.todayRecovered})\n` +
           `Meninggal: ${stats.deaths} (+${stats.todayDeaths})\n` +
           `Dirawat: ${stats.active}\n` +
           `Kritis: ${stats.critical}\n\n` +
-          `Tetap jaga kesehatan dan rajin cuci tangan.\n\n` +
-          `Pembaharuan terakhir pada ${stats.updatedAt}.`,
+          `Tetap jaga kesehatan dan patuhi protokol kesehatan.\n\n` +
+          `_Pembaharuan terakhir pada ${stats.updatedAt}._`,
       ),
+    );
+  }
+
+  private getTodayStats() {
+    return from(
+      this.cacheManager.get<CountryStats>(this.COUNTRY_CACHE_KEY),
+    ).pipe(
+      switchMap((cachedStats) =>
+        cachedStats ? of(cachedStats) : this.upstreamAPI.getCountryStats(),
+      ),
+      tap((stats) => {
+        this.cacheManager.set(this.COUNTRY_CACHE_KEY, stats, 10_000);
+      }),
     );
   }
 

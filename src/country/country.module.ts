@@ -1,8 +1,8 @@
 import { HttpModule } from '@nestjs/axios';
 import { CacheModule } from '@nestjs/cache-manager';
 import { Module } from '@nestjs/common';
-import { OpenDiseaseUpstreamAPI } from 'src/open-disease/open-disease-upstream.api';
-import { UpstreamAPI } from 'src/upstream-api.abstract';
+import { OpenDiseaseUpstreamAPI } from '../open-disease/open-disease-upstream.api';
+import { UpstreamAPI } from '../upstream-api.abstract';
 import { CountryController } from './country.controller';
 import { CountryService } from './country.service';
 
@@ -13,5 +13,6 @@ import { CountryService } from './country.service';
     CountryService,
     { provide: UpstreamAPI, useClass: OpenDiseaseUpstreamAPI },
   ],
+  exports: [CountryService],
 })
 export class CountryModule {}
