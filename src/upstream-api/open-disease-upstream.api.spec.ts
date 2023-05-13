@@ -2,11 +2,11 @@ import type { HttpService } from '@nestjs/axios';
 import { firstValueFrom, of } from 'rxjs';
 import { OpenDiseaseUpstreamAPI } from './open-disease-upstream.api';
 
-let httpServiceMock: HttpService;
+const httpServiceGetMock = jest.fn();
 let upstreamAPI: OpenDiseaseUpstreamAPI;
 
 beforeEach(() => {
-  httpServiceMock = { get: jest.fn() } as unknown as HttpService;
+  const httpServiceMock = { get: httpServiceGetMock } as unknown as HttpService;
   upstreamAPI = new OpenDiseaseUpstreamAPI(httpServiceMock);
 });
 
@@ -24,7 +24,7 @@ describe('getCountryStats()', () => {
   };
 
   it('should return valid country stats when the HTTP request to the Open Disease API is successful', async () => {
-    (httpServiceMock.get as jest.Mock).mockReturnValueOnce(
+    httpServiceGetMock.mockReturnValueOnce(
       of({ data: openDiseaseCountryStats }),
     );
 
@@ -40,10 +40,4 @@ describe('getCountryStats()', () => {
     expect(result.critical).toBe(openDiseaseCountryStats.critical);
     expect(result.updatedAt.getTime()).toBe(openDiseaseCountryStats.updated);
   });
-});
-
-it('should throw a "Method not implemented" error for getProvinceStats', async () => {
-  await expect(firstValueFrom(upstreamAPI.getProvinceStats())).rejects.toThrow(
-    'Method not implemented',
-  );
 });

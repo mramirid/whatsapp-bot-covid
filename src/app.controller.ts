@@ -12,7 +12,7 @@ import { TwilioResponseInterceptor } from './interceptors/twilio-response.interc
 
 @Controller()
 export class AppController {
-  private logger = new Logger(AppController.name);
+  private readonly logger = new Logger(AppController.name);
 
   constructor(private readonly appService: AppService) {}
 

@@ -2,7 +2,7 @@ import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Inject, Injectable } from '@nestjs/common';
 import type { Cache } from 'cache-manager';
 import { from, map, of, retry, switchMap, tap } from 'rxjs';
-import type { CountryStats } from '../upstream-api/country-stats.interface';
+import type { CountryStats } from '../upstream-api/interfaces/country-stats.interface';
 import { UpstreamAPI } from '../upstream-api/upstream-api.abstract';
 
 @Injectable()

@@ -1,7 +1,7 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
-import { map, throwError } from 'rxjs';
-import type { OpenDiseaseCountryStats } from './open-disease-country-stats.interface';
+import { map } from 'rxjs';
+import type { OpenDiseaseCountryStats } from './interfaces/open-disease-country-stats.interface';
 import { UpstreamAPI } from './upstream-api.abstract';
 
 @Injectable()
@@ -29,9 +29,5 @@ export class OpenDiseaseUpstreamAPI extends UpstreamAPI {
           updatedAt: new Date(stats.updated),
         })),
       );
-  }
-
-  getProvinceStats() {
-    return throwError(() => new Error('Method not implemented.'));
   }
 }
