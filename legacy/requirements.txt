@@ -1,3 +1,0 @@
-twilio==6.40.0
-Flask==1.1.1
-Flask-MySQLdb==0.2.0
