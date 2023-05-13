@@ -8,7 +8,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { AppService } from './app.service';
-import { TwilioResponseInterceptor } from './twilio-response.interceptor';
+import { TwilioResponseInterceptor } from './interceptors/twilio-response.interceptor';
 
 @Controller()
 export class AppController {
