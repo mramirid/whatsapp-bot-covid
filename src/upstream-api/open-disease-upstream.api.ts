@@ -13,7 +13,7 @@ export class OpenDiseaseUpstreamAPI extends UpstreamAPI {
   getCountryStats() {
     return this.httpService
       .get<OpenDiseaseCountryStats>(
-        'https://corona.lmao.ninja/v2/countries/ID?yesterday=true&strict=true&query=',
+        'https://corona.lmao.ninja/v2/countries/ID?strict=true&query=',
       )
       .pipe(
         map((response) => response.data),
