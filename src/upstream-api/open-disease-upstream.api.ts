@@ -17,17 +17,7 @@ export class OpenDiseaseUpstreamAPI extends UpstreamAPI {
         'https://corona.lmao.ninja/v2/countries/ID?yesterday=true&strict=true&query=',
       )
       .pipe(
-        map((response) => {
-          if (response.status >= 400) {
-            throw new Error(
-              'Open Disease API responded an error with status ' +
-                response.status,
-              { cause: response },
-            );
-          }
-
-          return response.data;
-        }),
+        map((response) => response.data),
         map((stats) => ({
           cases: stats.cases,
           todayCases: stats.todayCases,
