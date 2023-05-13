@@ -3,8 +3,8 @@ import { Inject, Injectable } from '@nestjs/common';
 import type { Cache } from 'cache-manager';
 import { randomUUID } from 'crypto';
 import { from, map, of, switchMap, tap } from 'rxjs';
-import { UpstreamAPI } from '../upstream-api.abstract';
-import type { CountryStats } from './country-stats.interface';
+import { UpstreamAPI } from '../upstream-api/upstream-api.abstract';
+import type { CountryStats } from '../upstream-api/country-stats.interface';
 
 @Injectable()
 export class CountryService {
