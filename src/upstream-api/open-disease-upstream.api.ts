@@ -1,7 +1,6 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
-import { map, Observable } from 'rxjs';
-import type { CountryStats } from '../upstream-api/country-stats.interface';
+import { map, throwError } from 'rxjs';
 import type { OpenDiseaseCountryStats } from './open-disease-country-stats.interface';
 import { UpstreamAPI } from './upstream-api.abstract';
 
@@ -11,7 +10,7 @@ export class OpenDiseaseUpstreamAPI extends UpstreamAPI {
     super();
   }
 
-  getCountryStats(): Observable<CountryStats> {
+  getCountryStats() {
     return this.httpService
       .get<OpenDiseaseCountryStats>(
         'https://corona.lmao.ninja/v2/countries/ID?yesterday=true&strict=true&query=',
@@ -22,7 +21,7 @@ export class OpenDiseaseUpstreamAPI extends UpstreamAPI {
           cases: stats.cases,
           todayCases: stats.todayCases,
           deaths: stats.deaths,
-          todayDeaths: stats.todayCases,
+          todayDeaths: stats.todayDeaths,
           recovered: stats.recovered,
           todayRecovered: stats.todayRecovered,
           active: stats.active,
@@ -32,7 +31,7 @@ export class OpenDiseaseUpstreamAPI extends UpstreamAPI {
       );
   }
 
-  getProvinceStats(): Observable<never> {
-    throw new Error('Method not implemented.');
+  getProvinceStats() {
+    return throwError(() => new Error('Method not implemented.'));
   }
 }
