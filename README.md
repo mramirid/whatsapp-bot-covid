@@ -2,9 +2,9 @@
 
 A WhatsApp chatbot to obtain COVID-19 statistics in Indonesia.
 
-This bot utilizes the Twilio messaging service to make itself available on WhatsApp. The messaging service is then integrated with the bot's backend. The backend handles the messages sent by users and generates responses for them. You can find a tutorial on how to create a backend for a WhatsApp bot using NestJS and connect it to Twilio in this article: [Create a WhatsApp Bot to Discover Restaurants using Twilio and Node.js](https://www.twilio.com/blog/whatsapp-bot-discover-restaurants-twilio-node-js).
+This bot utilizes the Twilio messaging service to make itself available on WhatsApp. The messaging service is then integrated with the bot's backend. The backend handles the messages sent by users and generates responses for them. You can find the tutorial on how to create a WhatsApp bot backend using NestJS and how to integrate it with Twilio in this article: [Create a WhatsApp Bot to Discover Restaurants using Twilio and Node.js](https://www.twilio.com/blog/whatsapp-bot-discover-restaurants-twilio-node-js).
 
-This project is now in version 2. I have removed the feature to search COVID-19 statistics at provincial level, because I could not find any API that provides such data. The first version can be found in the [V1 - The Legacy Codebase](https://github.com/mramirid/whatsapp-bot-covid/releases/tag/v1) release.
+This project is now in version 2. We have removed the feature to search COVID-19 statistics at provincial level, because we could not find any API that provides such data. The first version can be found in the [V1 - The Legacy Codebase](https://github.com/mramirid/whatsapp-bot-covid/releases/tag/v1) release.
 
 ## Screenshots
 
