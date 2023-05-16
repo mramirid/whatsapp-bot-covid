@@ -1,7 +1,7 @@
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Inject, Injectable } from '@nestjs/common';
 import type { Cache } from 'cache-manager';
-import { from, map, of, retry, switchMap, tap } from 'rxjs';
+import { from, map, mergeMap, of, retry, tap } from 'rxjs';
 import type { CountryStats } from '../upstream-api/interfaces/country-stats.interface';
 import { UpstreamAPI } from '../upstream-api/upstream-api.abstract';
 
@@ -33,12 +33,12 @@ export class CountryService {
 
   private getTodayStats() {
     return from(this.cacheManager.get<CountryStats>(this.STATS_CACHE_KEY)).pipe(
-      switchMap((cachedStats) => {
+      mergeMap((cachedStats) => {
         if (cachedStats) {
           return of(cachedStats);
         }
         return this.upstreamAPI.getCountryStats().pipe(
-          retry(3),
+          retry(2),
           tap((stats) => {
             this.cacheManager.set(this.STATS_CACHE_KEY, stats);
           }),
