@@ -10,7 +10,7 @@ export class AppService {
       `Halo ${senderName},\n\n` +
       'Saya adalah bot yang didesain untuk memberikan info kasus COVID-19 di Indonesia.\n' +
       'Sumber data didapatkan dari API yang disediakan oleh Open Disease Data API (https://corona.lmao.ninja/).\n' +
-      'Ketikkan ```/help``` untuk mendapatkan informasi mengenai saya dan daftar perintah yang tersedia.\n\n'
+      'Ketikkan ```/help``` untuk mendapatkan informasi mengenai saya dan daftar perintah yang tersedia.'
     );
   }
 

@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AppService - Unit Testing should reply hello correctly 1`] = `
+"Halo Amir,
+
+Saya adalah bot yang didesain untuk memberikan info kasus COVID-19 di Indonesia.
+Sumber data didapatkan dari API yang disediakan oleh Open Disease Data API (https://corona.lmao.ninja/).
+Ketikkan \`\`\`/help\`\`\` untuk mendapatkan informasi mengenai saya dan daftar perintah yang tersedia."
+`;
+
+exports[`AppService - Unit Testing should reply help correctly 1`] = `
+"Daftar perintah:
+1. \`\`\`/halo\`\`\` -> Perkenalan bot
+2. \`\`\`/nasional\`\`\` -> Statistik COVID-19 di Indonesia
+3. \`\`\`/help\`\`\` -> Daftar perintah
+
+_Versi 1.0 - 17/05/2020 20.00: Bot dibuat._
+_Versi 2.0 - 13/05/2023 10.06: Penggantian API & penghapusan fitur statistik per-provinsi._"
+`;
+
+exports[`AppService - Unit Testing should reply unknown correctly 1`] = `"Maaf perintah tidak dikenali, kirimkan saya \`\`\`/help\`\`\` untuk melihat daftar perintah."`;
