@@ -1,5 +1,8 @@
 {
-  "conventionalCommits.scopes": ["country"],
+  "conventionalCommits.scopes": [
+    "country",
+    "app"
+  ],
   "typescript.tsdk": "./node_modules/typescript/lib",
   "typescript.enablePromptUseWorkspaceTsdk": true
 }
