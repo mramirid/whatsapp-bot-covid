@@ -1,12 +1,13 @@
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Test } from '@nestjs/testing';
+import type { Cache } from 'cache-manager';
 import { catchError, of, throwError } from 'rxjs';
 import { firstValueFrom } from 'rxjs/internal/firstValueFrom';
 import type { CountryStats } from '../upstream-api/interfaces/country-stats.interface';
 import { UpstreamAPI } from '../upstream-api/upstream-api.abstract';
 import { CountryService } from './country.service';
 
-const countryStats: Readonly<CountryStats> = {
+const dummyStats: Readonly<CountryStats> = {
   cases: 131_524_885,
   todayCases: 45_442_552,
   deaths: 3_352_999,
@@ -18,7 +19,7 @@ const countryStats: Readonly<CountryStats> = {
   updatedAt: new Date('2023-05-14T01:24:30.408Z'),
 };
 
-describe('CountryService - Unit Testing', () => {
+describe('Unit Testing', () => {
   const getCacheMock = jest.fn();
   const setCacheMock = jest.fn();
 
@@ -29,12 +30,12 @@ describe('CountryService - Unit Testing', () => {
   let statsCacheKey: string;
 
   beforeEach(async () => {
-    const cacheManagerMock = {
+    const cacheManagerMock: Partial<Cache> = {
       get: getCacheMock,
       set: setCacheMock,
     };
 
-    const upstreamAPIMock = {
+    const upstreamAPIMock: UpstreamAPI = {
       getCountryStats: getCountryStatsMock,
     };
 
@@ -56,47 +57,34 @@ describe('CountryService - Unit Testing', () => {
     getCountryStatsMock.mockReset();
   });
 
-  describe('getTodayStatsMessage()', () => {
-    it('should return the stats as a message with the correct format', async () => {
-      getCacheMock.mockResolvedValueOnce(undefined);
-      getCountryStatsMock.mockReturnValueOnce(of(countryStats));
-
-      const gettingTodayStatsMessage = firstValueFrom(
-        service.getTodayStatsMessage(),
-      );
-
-      await expect(gettingTodayStatsMessage).resolves.toMatchSnapshot();
-    });
-  });
-
-  describe('getTodayStats()', () => {
+  describe('getStats()', () => {
     it('should get the stats from the cache if available', async () => {
-      getCacheMock.mockResolvedValueOnce(countryStats);
+      getCacheMock.mockResolvedValueOnce(dummyStats);
 
-      const gettingTodayStats = firstValueFrom(service['getTodayStats']());
+      const gettingTodayStats = firstValueFrom(service['getStats']());
 
-      await expect(gettingTodayStats).resolves.toBe(countryStats);
+      await expect(gettingTodayStats).resolves.toBe(dummyStats);
       expect(getCacheMock).toHaveBeenCalledWith(statsCacheKey);
     });
 
     it('should fetch the stats from the upstream API if it is not available in the cache', async () => {
       getCacheMock.mockResolvedValueOnce(undefined);
-      getCountryStatsMock.mockReturnValueOnce(of(countryStats));
+      getCountryStatsMock.mockReturnValueOnce(of(dummyStats));
 
-      const gettingTodayStats = firstValueFrom(service['getTodayStats']());
+      const gettingTodayStats = firstValueFrom(service['getStats']());
 
-      await expect(gettingTodayStats).resolves.toBe(countryStats);
+      await expect(gettingTodayStats).resolves.toBe(dummyStats);
       expect(getCountryStatsMock).toHaveBeenCalled();
     });
 
-    it('should cache the stats after fetching the stats from the upstream API', async () => {
+    it('should cache the stats fetched from the upstream API', async () => {
       getCacheMock.mockResolvedValueOnce(undefined);
-      getCountryStatsMock.mockReturnValueOnce(of(countryStats));
+      getCountryStatsMock.mockReturnValueOnce(of(dummyStats));
 
-      const gettingTodayStats = firstValueFrom(service['getTodayStats']());
+      const gettingTodayStats = firstValueFrom(service['getStats']());
 
-      await expect(gettingTodayStats).resolves.toBe(countryStats);
-      expect(setCacheMock).toHaveBeenCalledWith(statsCacheKey, countryStats);
+      await expect(gettingTodayStats).resolves.toBe(dummyStats);
+      expect(setCacheMock).toHaveBeenCalledWith(statsCacheKey, dummyStats);
     });
 
     it('should fetch the upstream API three times if it fails initially', (done) => {
@@ -104,11 +92,11 @@ describe('CountryService - Unit Testing', () => {
       getCountryStatsMock
         .mockReturnValueOnce(throwError(() => new Error()))
         .mockReturnValueOnce(throwError(() => new Error()))
-        .mockReturnValueOnce(of(countryStats));
+        .mockReturnValueOnce(of(dummyStats));
 
       let numFetches = 0;
 
-      service['getTodayStats']()
+      service['getStats']()
         .pipe(
           catchError((_, caught) => {
             numFetches++;
@@ -118,9 +106,12 @@ describe('CountryService - Unit Testing', () => {
           }),
         )
         .subscribe({
+          next: () => {
+            numFetches++;
+          },
+          error: done,
           complete: () => {
-            expect(++numFetches).toBe(3);
-
+            expect(numFetches).toBe(3);
             done();
           },
         });
@@ -130,7 +121,7 @@ describe('CountryService - Unit Testing', () => {
       getCacheMock.mockResolvedValueOnce(undefined);
       getCountryStatsMock.mockReturnValue(throwError(() => new Error()));
 
-      service['getTodayStats']().subscribe({
+      service['getStats']().subscribe({
         error: () => {
           expect(setCacheMock).not.toBeCalled();
           done();
@@ -139,7 +130,7 @@ describe('CountryService - Unit Testing', () => {
     });
   });
 
-  describe('formatStats()', () => {
+  describe('localizeStats()', () => {
     const numberFormatter = new Intl.NumberFormat('id-ID');
     const dateFormatter = new Intl.DateTimeFormat('id-ID', {
       dateStyle: 'medium',
@@ -147,18 +138,18 @@ describe('CountryService - Unit Testing', () => {
     });
 
     it('should return formatted stats localized in Indonesian', () => {
-      const formattedStats = service['formatStats'](countryStats);
+      const formattedStats = service['localizeStats'](dummyStats);
 
       expect(formattedStats).toEqual({
-        cases: numberFormatter.format(countryStats.cases),
-        todayCases: numberFormatter.format(countryStats.todayCases),
-        recovered: numberFormatter.format(countryStats.recovered),
-        todayRecovered: numberFormatter.format(countryStats.todayRecovered),
-        deaths: numberFormatter.format(countryStats.deaths),
-        todayDeaths: numberFormatter.format(countryStats.todayDeaths),
-        active: numberFormatter.format(countryStats.active),
-        critical: numberFormatter.format(countryStats.critical),
-        updatedAt: dateFormatter.format(countryStats.updatedAt),
+        cases: numberFormatter.format(dummyStats.cases),
+        todayCases: numberFormatter.format(dummyStats.todayCases),
+        recovered: numberFormatter.format(dummyStats.recovered),
+        todayRecovered: numberFormatter.format(dummyStats.todayRecovered),
+        deaths: numberFormatter.format(dummyStats.deaths),
+        todayDeaths: numberFormatter.format(dummyStats.todayDeaths),
+        active: numberFormatter.format(dummyStats.active),
+        critical: numberFormatter.format(dummyStats.critical),
+        updatedAt: dateFormatter.format(dummyStats.updatedAt),
       });
     });
   });

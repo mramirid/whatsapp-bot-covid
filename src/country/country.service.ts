@@ -14,9 +14,9 @@ export class CountryService {
     @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
   ) {}
 
-  getTodayStatsMessage() {
-    return this.getTodayStats().pipe(
-      map((stats) => this.formatStats(stats)),
+  getStatsMessage() {
+    return this.getStats().pipe(
+      map((stats) => this.localizeStats(stats)),
       map(
         (stats) =>
           '*Statistik COVID-19 di Indonesia*\n\n' +
@@ -31,7 +31,7 @@ export class CountryService {
     );
   }
 
-  private getTodayStats() {
+  private getStats() {
     return from(this.cacheManager.get<CountryStats>(this.STATS_CACHE_KEY)).pipe(
       mergeMap((cachedStats) => {
         if (cachedStats) {
@@ -47,7 +47,9 @@ export class CountryService {
     );
   }
 
-  private formatStats(stats: CountryStats): Record<keyof CountryStats, string> {
+  private localizeStats(
+    stats: CountryStats,
+  ): Record<keyof CountryStats, string> {
     const numberFormatter = new Intl.NumberFormat('id-ID');
     const dateFormatter = new Intl.DateTimeFormat('id-ID', {
       dateStyle: 'medium',

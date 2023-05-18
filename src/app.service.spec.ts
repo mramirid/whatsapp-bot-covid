@@ -3,9 +3,9 @@ import { AppService } from './app.service';
 import type { CountryService } from './country/country.service';
 
 describe('AppService - Unit Testing', () => {
-  const getTodayStatsMessageMock = jest.fn(() => of('TODAY_STATS_MESSAGE'));
+  const getCountryStatsMessageSpy = jest.fn(() => of('COUNTRY_STATS_MESSAGE'));
   const countryServiceMock: Partial<CountryService> = {
-    getTodayStatsMessage: getTodayStatsMessageMock,
+    getStatsMessage: getCountryStatsMessageSpy,
   };
   const appService = new AppService(countryServiceMock as any);
 
@@ -21,10 +21,10 @@ describe('AppService - Unit Testing', () => {
     expect(appService.replyUnknown()).toMatchSnapshot();
   });
 
-  it('should call CountryService.getTodayStatsMessage() in order to reply nasional', (done) => {
+  it('should call CountryService.getStatsMessage() in order to reply nasional', (done) => {
     appService.replyNasional().subscribe({
       next: () => {
-        expect(getTodayStatsMessageMock).toBeCalled();
+        expect(getCountryStatsMessageSpy).toBeCalled();
       },
       error: done,
       complete: done,

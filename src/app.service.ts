@@ -15,7 +15,7 @@ export class AppService {
   }
 
   replyNasional() {
-    return this.countryService.getTodayStatsMessage();
+    return this.countryService.getStatsMessage();
   }
 
   replyHelp() {
