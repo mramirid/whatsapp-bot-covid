@@ -1,13 +1,14 @@
 import { CacheModule, CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Test } from '@nestjs/testing';
 import type { Cache } from 'cache-manager';
-import { catchError, of, switchMap, throwError } from 'rxjs';
+import { clone } from 'lodash';
+import { catchError, delay, of, switchMap, throwError } from 'rxjs';
 import { firstValueFrom } from 'rxjs/internal/firstValueFrom';
 import { UpstreamAPI } from '../upstream-api/upstream-api.abstract';
 import type { CountryStats } from './country-stats.interface';
 import { CountryService } from './country.service';
 
-const dummyStats: Readonly<CountryStats> = {
+const dummyStats: CountryStats = {
   cases: 131_524_885,
   todayCases: 45_442_552,
   deaths: 3_352_999,
@@ -61,9 +62,9 @@ describe('Unit Testing', () => {
     it('should get the stats from the cache if available', async () => {
       getCacheMock.mockResolvedValueOnce(dummyStats);
 
-      const gettingTodayStats = firstValueFrom(service['getStats']());
+      const gettingStats = firstValueFrom(service['getStats']());
 
-      await expect(gettingTodayStats).resolves.toBe(dummyStats);
+      await expect(gettingStats).resolves.toBe(dummyStats);
       expect(getCacheMock).toHaveBeenCalledWith(statsCacheKey);
     });
 
@@ -71,9 +72,9 @@ describe('Unit Testing', () => {
       getCacheMock.mockResolvedValueOnce(undefined);
       getCountryStatsMock.mockReturnValueOnce(of(dummyStats));
 
-      const gettingTodayStats = firstValueFrom(service['getStats']());
+      const gettingStats = firstValueFrom(service['getStats']());
 
-      await expect(gettingTodayStats).resolves.toBe(dummyStats);
+      await expect(gettingStats).resolves.toBe(dummyStats);
       expect(getCountryStatsMock).toHaveBeenCalled();
     });
 
@@ -81,9 +82,9 @@ describe('Unit Testing', () => {
       getCacheMock.mockResolvedValueOnce(undefined);
       getCountryStatsMock.mockReturnValueOnce(of(dummyStats));
 
-      const gettingTodayStats = firstValueFrom(service['getStats']());
+      const gettingStats = firstValueFrom(service['getStats']());
 
-      await expect(gettingTodayStats).resolves.toBe(dummyStats);
+      await expect(gettingStats).resolves.toBe(dummyStats);
       expect(setCacheMock).toHaveBeenCalledWith(statsCacheKey, dummyStats);
     });
 
@@ -156,17 +157,19 @@ describe('Unit Testing', () => {
 });
 
 describe('Integration Testing', () => {
+  const CACHE_TTL = 5000;
+
   let service: CountryService;
   let cacheManager: Cache;
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
-      imports: [CacheModule.register()],
+      imports: [CacheModule.register({ ttl: CACHE_TTL })],
       providers: [
         CountryService,
         {
           provide: UpstreamAPI,
-          useValue: { getCountryStats: () => of(dummyStats) },
+          useValue: { getCountryStats: () => of(clone(dummyStats)) },
         },
       ],
     }).compile();
@@ -181,22 +184,47 @@ describe('Integration Testing', () => {
 
   describe('getStats()', () => {
     it('should return the stats fetched from the upstream API in the first call', async () => {
-      const stats$ = service['getStats']();
-
-      await expect(firstValueFrom(stats$)).resolves.toBe(dummyStats);
-    });
-
-    it('should return the stats from the cache in the second call', async () => {
-      const stats = await firstValueFrom(
-        service['getStats']().pipe(switchMap(() => service['getStats']())),
-      );
-
       const cachedStats = await cacheManager.get<CountryStats>(
         service['STATS_CACHE_KEY'],
       );
 
-      expect(stats).toBe(cachedStats);
+      const stats = await firstValueFrom(service['getStats']());
+
+      expect(stats).not.toBe(cachedStats);
     });
+
+    it('should return the stats from the cache in the second call', async () => {
+      const cachedFirstStats = await firstValueFrom(
+        service['getStats']().pipe(
+          switchMap(() =>
+            cacheManager.get<CountryStats>(service['STATS_CACHE_KEY']),
+          ),
+        ),
+      );
+
+      const secondStats = await firstValueFrom(service['getStats']());
+
+      expect(secondStats).toBe(cachedFirstStats);
+    });
+
+    it(
+      "should refetch the stats if the previous cached stats' lifespan exceeds five seconds",
+      async () => {
+        const cachedFirstStats = await firstValueFrom(
+          service['getStats']().pipe(
+            switchMap(() =>
+              cacheManager.get<CountryStats>(service['STATS_CACHE_KEY']),
+            ),
+            delay(CACHE_TTL + 1000),
+          ),
+        );
+
+        const secondStats = await firstValueFrom(service['getStats']());
+
+        expect(secondStats).not.toBe(cachedFirstStats);
+      },
+      CACHE_TTL * 2,
+    );
   });
 
   describe('getStatsMessage()', () => {
