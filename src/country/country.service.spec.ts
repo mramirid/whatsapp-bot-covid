@@ -3,8 +3,8 @@ import { Test } from '@nestjs/testing';
 import type { Cache } from 'cache-manager';
 import { catchError, of, switchMap, throwError } from 'rxjs';
 import { firstValueFrom } from 'rxjs/internal/firstValueFrom';
-import type { CountryStats } from '../upstream-api/interfaces/country-stats.interface';
 import { UpstreamAPI } from '../upstream-api/upstream-api.abstract';
+import type { CountryStats } from './country-stats.interface';
 import { CountryService } from './country.service';
 
 const dummyStats: Readonly<CountryStats> = {

@@ -1,7 +1,7 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import { map } from 'rxjs';
-import type { OpenDiseaseCountryStats } from './interfaces/open-disease-country-stats.interface';
+import type { OpenDiseaseCountryStats } from './open-disease-country-stats.interface';
 import { UpstreamAPI } from './upstream-api.abstract';
 
 @Injectable()
