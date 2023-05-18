@@ -1,7 +1,7 @@
-import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { CacheModule, CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Test } from '@nestjs/testing';
 import type { Cache } from 'cache-manager';
-import { catchError, of, throwError } from 'rxjs';
+import { catchError, of, switchMap, throwError } from 'rxjs';
 import { firstValueFrom } from 'rxjs/internal/firstValueFrom';
 import type { CountryStats } from '../upstream-api/interfaces/country-stats.interface';
 import { UpstreamAPI } from '../upstream-api/upstream-api.abstract';
@@ -151,6 +151,61 @@ describe('Unit Testing', () => {
         critical: numberFormatter.format(dummyStats.critical),
         updatedAt: dateFormatter.format(dummyStats.updatedAt),
       });
+    });
+  });
+});
+
+describe('Integration Testing', () => {
+  let service: CountryService;
+  let cacheManager: Cache;
+
+  beforeEach(async () => {
+    const module = await Test.createTestingModule({
+      imports: [CacheModule.register()],
+      providers: [
+        CountryService,
+        {
+          provide: UpstreamAPI,
+          useValue: { getCountryStats: () => of(dummyStats) },
+        },
+      ],
+    }).compile();
+
+    service = module.get(CountryService);
+    cacheManager = module.get<Cache>(CACHE_MANAGER);
+  });
+
+  afterEach(async () => {
+    await cacheManager.reset();
+  });
+
+  describe('getStats()', () => {
+    it('should return the stats fetched from the upstream API in the first call', async () => {
+      const stats$ = service['getStats']();
+
+      await expect(firstValueFrom(stats$)).resolves.toBe(dummyStats);
+    });
+
+    it('should return the stats from the cache in the second call', async () => {
+      const stats = await firstValueFrom(
+        service['getStats']().pipe(switchMap(() => service['getStats']())),
+      );
+
+      const cachedStats = await cacheManager.get<CountryStats>(
+        service['STATS_CACHE_KEY'],
+      );
+
+      expect(stats).toBe(cachedStats);
+    });
+  });
+
+  describe('getStatsMessage()', () => {
+    it('should return the stats as a message with the correct format', async () => {
+      const gettingTodayStatsMessage = firstValueFrom(
+        service.getStatsMessage(),
+      );
+
+      await expect(gettingTodayStatsMessage).resolves.toMatchSnapshot();
     });
   });
 });

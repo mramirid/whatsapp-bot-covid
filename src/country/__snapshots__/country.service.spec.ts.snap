@@ -1,0 +1,15 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Integration Testing getStatsMessage() should return the stats as a message with the correct format 1`] = `
+"*Statistik COVID-19 di Indonesia*
+
+Total: 131.524.885 (+45.442.552)
+Sembuh: 90.332 (+7.223)
+Meninggal: 3.352.999 (+823.993)
+Dirawat: 583
+Kritis: 2
+
+Tetap jaga kesehatan dan patuhi protokol kesehatan.
+
+_Pembaharuan terakhir pada 14 Mei 2023, 08.24.30 WIB._"
+`;
