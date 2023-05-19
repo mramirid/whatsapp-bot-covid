@@ -1,39 +1,58 @@
-import { of } from 'rxjs';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Test } from '@nestjs/testing';
+import { firstValueFrom } from 'rxjs';
 import { AppService } from './app.service';
-import type { CountryService } from './country/country.service';
+import { dummyCountryStats } from './country/country-stats.dummy';
+import { CountryService } from './country/country.service';
+import { UpstreamAPI } from './upstream-api/upstream-api.abstract';
 
-const getStatsMessageSpy = jest.fn(() => of('COUNTRY_STATS_MESSAGE'));
-const countryServiceMock: Partial<CountryService> = {
-  getStatsMessage: getStatsMessageSpy,
-};
-const appService = new AppService(countryServiceMock as any);
+let service: AppService;
 
-describe('replyHello()', () => {
-  it('should reply hello correctly', () => {
-    expect(appService.replyHello('Amir')).toMatchSnapshot();
+beforeEach(async () => {
+  const cacheManagerMock = {
+    get: async () => dummyCountryStats,
+  };
+
+  const module = await Test.createTestingModule({
+    providers: [
+      AppService,
+      CountryService,
+      { provide: CACHE_MANAGER, useValue: cacheManagerMock },
+      { provide: UpstreamAPI, useValue: {} },
+    ],
+  }).compile();
+
+  service = module.get(AppService);
+});
+
+describe('Unit Testing', () => {
+  describe('replyHello()', () => {
+    it('should reply hello correctly', () => {
+      expect(service.replyHello('Amir')).toMatchSnapshot();
+    });
+  });
+
+  describe('replyHelp()', () => {
+    it('should reply help correctly', () => {
+      expect(service.replyHelp()).toMatchSnapshot();
+    });
+  });
+
+  describe('replyUnknown()', () => {
+    it('should reply unknown correctly', () => {
+      expect(service.replyUnknown()).toMatchSnapshot();
+    });
   });
 });
 
-describe('replyHelp()', () => {
-  it('should reply help correctly', () => {
-    expect(appService.replyHelp()).toMatchSnapshot();
-  });
-});
+describe('Integration Testing', () => {
+  describe('replyNasional()', () => {
+    it('should return the country stats message in order to reply nasional', async () => {
+      const nasionalReplyMessage = await firstValueFrom(
+        service.replyNasional(),
+      );
 
-describe('replyUnknown()', () => {
-  it('should reply unknown correctly', () => {
-    expect(appService.replyUnknown()).toMatchSnapshot();
-  });
-});
-
-describe('replyNasional()', () => {
-  it('should call CountryService.getStatsMessage() in order to reply nasional', (done) => {
-    appService.replyNasional().subscribe({
-      next: () => {
-        expect(getStatsMessageSpy).toBeCalled();
-      },
-      error: done,
-      complete: done,
+      expect(nasionalReplyMessage).toMatchSnapshot();
     });
   });
 });

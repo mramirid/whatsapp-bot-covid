@@ -5,20 +5,9 @@ import { clone } from 'lodash';
 import { catchError, delay, of, switchMap, throwError } from 'rxjs';
 import { firstValueFrom } from 'rxjs/internal/firstValueFrom';
 import { UpstreamAPI } from '../upstream-api/upstream-api.abstract';
+import { dummyCountryStats } from './country-stats.dummy';
 import type { CountryStats } from './country-stats.interface';
 import { CountryService } from './country.service';
-
-const dummyStats: CountryStats = {
-  cases: 131_524_885,
-  todayCases: 45_442_552,
-  deaths: 3_352_999,
-  todayDeaths: 823_993,
-  recovered: 90_332,
-  todayRecovered: 7223,
-  active: 583,
-  critical: 2,
-  updatedAt: new Date('2023-05-14T01:24:30.408Z'),
-};
 
 describe('Unit Testing', () => {
   const getCacheMock = jest.fn();
@@ -60,32 +49,35 @@ describe('Unit Testing', () => {
 
   describe('getStats()', () => {
     it('should get the stats from the cache if available', async () => {
-      getCacheMock.mockResolvedValueOnce(dummyStats);
+      getCacheMock.mockResolvedValueOnce(dummyCountryStats);
 
       const gettingStats = firstValueFrom(service['getStats']());
 
-      await expect(gettingStats).resolves.toBe(dummyStats);
+      await expect(gettingStats).resolves.toBe(dummyCountryStats);
       expect(getCacheMock).toHaveBeenCalledWith(statsCacheKey);
     });
 
     it('should fetch the stats from the upstream API if it is not available in the cache', async () => {
       getCacheMock.mockResolvedValueOnce(undefined);
-      getCountryStatsMock.mockReturnValueOnce(of(dummyStats));
+      getCountryStatsMock.mockReturnValueOnce(of(dummyCountryStats));
 
       const gettingStats = firstValueFrom(service['getStats']());
 
-      await expect(gettingStats).resolves.toBe(dummyStats);
+      await expect(gettingStats).resolves.toBe(dummyCountryStats);
       expect(getCountryStatsMock).toHaveBeenCalled();
     });
 
     it('should cache the stats fetched from the upstream API', async () => {
       getCacheMock.mockResolvedValueOnce(undefined);
-      getCountryStatsMock.mockReturnValueOnce(of(dummyStats));
+      getCountryStatsMock.mockReturnValueOnce(of(dummyCountryStats));
 
       const gettingStats = firstValueFrom(service['getStats']());
 
-      await expect(gettingStats).resolves.toBe(dummyStats);
-      expect(setCacheMock).toHaveBeenCalledWith(statsCacheKey, dummyStats);
+      await expect(gettingStats).resolves.toBe(dummyCountryStats);
+      expect(setCacheMock).toHaveBeenCalledWith(
+        statsCacheKey,
+        dummyCountryStats,
+      );
     });
 
     it('should fetch the upstream API three times if it fails initially', (done) => {
@@ -93,7 +85,7 @@ describe('Unit Testing', () => {
       getCountryStatsMock
         .mockReturnValueOnce(throwError(() => new Error()))
         .mockReturnValueOnce(throwError(() => new Error()))
-        .mockReturnValueOnce(of(dummyStats));
+        .mockReturnValueOnce(of(dummyCountryStats));
 
       let numFetches = 0;
 
@@ -139,18 +131,20 @@ describe('Unit Testing', () => {
     });
 
     it('should return formatted stats localized in Indonesian', () => {
-      const formattedStats = service['localizeStats'](dummyStats);
+      const formattedStats = service['localizeStats'](dummyCountryStats);
 
       expect(formattedStats).toEqual({
-        cases: numberFormatter.format(dummyStats.cases),
-        todayCases: numberFormatter.format(dummyStats.todayCases),
-        recovered: numberFormatter.format(dummyStats.recovered),
-        todayRecovered: numberFormatter.format(dummyStats.todayRecovered),
-        deaths: numberFormatter.format(dummyStats.deaths),
-        todayDeaths: numberFormatter.format(dummyStats.todayDeaths),
-        active: numberFormatter.format(dummyStats.active),
-        critical: numberFormatter.format(dummyStats.critical),
-        updatedAt: dateFormatter.format(dummyStats.updatedAt),
+        cases: numberFormatter.format(dummyCountryStats.cases),
+        todayCases: numberFormatter.format(dummyCountryStats.todayCases),
+        recovered: numberFormatter.format(dummyCountryStats.recovered),
+        todayRecovered: numberFormatter.format(
+          dummyCountryStats.todayRecovered,
+        ),
+        deaths: numberFormatter.format(dummyCountryStats.deaths),
+        todayDeaths: numberFormatter.format(dummyCountryStats.todayDeaths),
+        active: numberFormatter.format(dummyCountryStats.active),
+        critical: numberFormatter.format(dummyCountryStats.critical),
+        updatedAt: dateFormatter.format(dummyCountryStats.updatedAt),
       });
     });
   });
@@ -169,7 +163,7 @@ describe('Integration Testing', () => {
         CountryService,
         {
           provide: UpstreamAPI,
-          useValue: { getCountryStats: () => of(clone(dummyStats)) },
+          useValue: { getCountryStats: () => of(clone(dummyCountryStats)) },
         },
       ],
     }).compile();
