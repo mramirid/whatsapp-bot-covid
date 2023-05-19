@@ -3,7 +3,7 @@ import { of } from 'rxjs';
 import { twiml } from 'twilio';
 import { TwilioResponseInterceptor } from './twilio-response.interceptor';
 
-describe('TwilioResponseInterceptor', () => {
+describe('intercept()', () => {
   const message = 'Hello World';
   const messageXML = new twiml.MessagingResponse().message(message).toString();
 
